@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nepal Map Loader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1a1a2e;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .nepal-loader {
+            position: relative;
+            width: 420px;
+            height: 320px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nepal-map {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        /* --- Map Outline Draw --- */
+        .nepal-map .map-outline {
+            fill: none;
+            stroke: #e94560;
+            stroke-width: 0.8;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+            stroke-dasharray: 200;
+            stroke-dashoffset: 200;
+            animation: drawMap 3.2s ease-in-out infinite;
+            filter: drop-shadow(0 0 4px rgba(233, 69, 96, 0.6));
+        }
+
+        @keyframes drawMap {
+            0%   { stroke-dashoffset: 200; stroke: #e94560; }
+            45%  { stroke-dashoffset: 0;   stroke: #e94560; }
+            55%  { stroke-dashoffset: 0;   stroke: #0f3460; }
+            70%  { stroke-dashoffset: 0;   stroke: #e94560; }
+            100% { stroke-dashoffset: -200; stroke: #e94560; }
+        }
+
+        /* --- Glow Ring around map --- */
+        .nepal-map .map-glow {
+            fill: none;
+            stroke: rgba(233, 69, 96, 0.15);
+            stroke-width: 2.5;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { stroke: rgba(233, 69, 96, 0.08); stroke-width: 2; }
+            50%      { stroke: rgba(233, 69, 96, 0.3);  stroke-width: 3.5; }
+        }
+
+        /* --- Shimmer Particles --- */
+        .shimmer-particles {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+        }
+
+        .shimmer-particles .p {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: #fff;
+            border-radius: 50%;
+            animation: shimmer 2.2s ease-in-out infinite;
+        }
+
+        .shimmer-particles .p:nth-child(1) { top: 28%; left: 30%; animation-delay: 0s; }
+        .shimmer-particles .p:nth-child(2) { top: 35%; left: 42%; animation-delay: 0.35s; }
+        .shimmer-particles .p:nth-child(3) { top: 40%; left: 55%; animation-delay: 0.7s; }
+        .shimmer-particles .p:nth-child(4) { top: 32%; left: 65%; animation-delay: 1.05s; }
+        .shimmer-particles .p:nth-child(5) { top: 38%; left: 75%; animation-delay: 1.4s; }
+        .shimmer-particles .p:nth-child(6) { top: 45%; left: 48%; animation-delay: 0.2s; }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 0.9; transform: scale(2); box-shadow: 0 0 8px rgba(255,255,255,0.6); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="loader-overlay" id="nepalLoader">
+    <div class="nepal-loader">
+
+        <svg class="nepal-map"
+             viewBox="1417 299 60 40"
+             xmlns="http://www.w3.org/2000/svg">
+
+            <defs>
+                <clipPath id="nepalClip">
+                    <path d="M1469 322.9l0.2 2.7 1.5 4.1-0.1 2.5-4.6 0.1-6.9-1.5-4.3-0.6-3.8-3.2-7.7-0.9-7.8-3.6-5.8-3.1-5.8-2.4 0.9-6 2.8-3 1.9-1.5 4.8 2 6.4 4.2 3.3 0.9 2.5 3.1 4.5 1.2 5 2.9 6.5 1.4 6.5 0.7z"/>
+                </clipPath>
+            </defs>
+
+            <!-- Outer glow -->
+            <path class="map-glow"
+                  d="M1469 322.9l0.2 2.7 1.5 4.1-0.1 2.5-4.6 0.1-6.9-1.5-4.3-0.6-3.8-3.2-7.7-0.9-7.8-3.6-5.8-3.1-5.8-2.4 0.9-6 2.8-3 1.9-1.5 4.8 2 6.4 4.2 3.3 0.9 2.5 3.1 4.5 1.2 5 2.9 6.5 1.4 6.5 0.7z"/>
+
+            <!-- Left-to-right fill clipped to map shape -->
+            <rect id="fillRect"
+                  x="1417" y="299"
+                  width="0" height="40"
+                  fill="rgba(233, 69, 96, 0.35)"
+                  clip-path="url(#nepalClip)"/>
+
+            <!-- Animated outline -->
+            <path class="map-outline"
+                  d="M1469 322.9l0.2 2.7 1.5 4.1-0.1 2.5-4.6 0.1-6.9-1.5-4.3-0.6-3.8-3.2-7.7-0.9-7.8-3.6-5.8-3.1-5.8-2.4 0.9-6 2.8-3 1.9-1.5 4.8 2 6.4 4.2 3.3 0.9 2.5 3.1 4.5 1.2 5 2.9 6.5 1.4 6.5 0.7z"/>
+
+        </svg>
+
+        <!-- Shimmer particles -->
+        <div class="shimmer-particles">
+            <div class="p"></div>
+            <div class="p"></div>
+            <div class="p"></div>
+            <div class="p"></div>
+            <div class="p"></div>
+            <div class="p"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let percent = 0;
+    const fillRect = document.getElementById('fillRect');
+    const loader   = document.getElementById('nepalLoader');
+
+    const MAP_VIEWBOX_WIDTH = 60;
+
+    const interval = setInterval(() => {
+        percent += Math.floor(Math.random() * 3) + 1;
+        if (percent >= 100) {
+            percent = 100;
+            clearInterval(interval);
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 500);
+        }
+
+        // Animate the fill rectangle width from left to right
+        const fillWidth = (percent / 100) * MAP_VIEWBOX_WIDTH;
+        fillRect.setAttribute('width', fillWidth);
+    }, 50);
+
+    // --- API for your app ---
+    function showNepalLoader() {
+        loader.classList.remove('hidden');
+    }
+
+    function hideNepalLoader() {
+        loader.classList.add('hidden');
+    }
+</script>
+
+</body>
+</html>
